@@ -11,15 +11,18 @@ use Laminas\Diactoros\ServerRequest;
  *
  * @package App\Controllers
  */
-class HomeController
+class HomeController extends Controller
 {
     /**
      * @param \Laminas\Diactoros\ServerRequest $request
      *
      * @return \Laminas\Diactoros\Response\HtmlResponse
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
     public function showAll(ServerRequest $request): HtmlResponse
     {
-        return new HtmlResponse('Hello!');
+        return $this->render('home', ['param1' => 'name!dd@##']);
     }
 }
