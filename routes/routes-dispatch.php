@@ -1,6 +1,7 @@
 <?php
 // Fetch method and URI from somewhere
 use FastRoute\Dispatcher;
+use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 $httpMethod = $_SERVER['REQUEST_METHOD'];
@@ -13,6 +14,9 @@ if (false !== $pos = strpos($uri, '?')) {
 $uri = rawurldecode($uri);
 
 $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
+
+$request = ServerRequestFactory::fromGlobals();
+
 switch ($routeInfo[0]) {
     case Dispatcher::NOT_FOUND:
         echo "404 Not Found";
@@ -26,9 +30,10 @@ switch ($routeInfo[0]) {
     case Dispatcher::FOUND:
         $handler = $routeInfo[1];
         $vars    = $routeInfo[2];
-
         [$class, $method] = explode("@", $handler, 2);
-        $class    = "App\\Controllers\\" . $class;
+        $class = "App\\Controllers\\" . $class;
+
+        array_unshift($vars, $request);
         $response = call_user_func_array([new  $class, $method], $vars);
         break;
 
